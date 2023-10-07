@@ -9,10 +9,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 
-public class ReadCSV {
+public class BackupManager {
 
          public CompletableFuture<List<Funko>> readFileFunko() throws InterruptedException {
 
