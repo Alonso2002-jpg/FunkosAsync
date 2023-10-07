@@ -27,5 +27,14 @@ public class Main {
         var fkup = fk.update(funkBD.get(5));
 
         System.out.println(fkup.get());
+
+        var fkn = fk.findById(5);
+
+        System.out.println(fkn.get());
+
+        var delFk = fk.deleteById(5);
+
+        System.out.println(fkn.get());
+
     }
 }

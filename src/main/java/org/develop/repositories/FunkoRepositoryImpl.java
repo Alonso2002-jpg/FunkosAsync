@@ -5,6 +5,7 @@ import org.develop.exceptions.FunkoNotSaveException;
 import org.develop.model.Funko;
 import org.develop.model.Modelo;
 import org.develop.services.database.DatabaseManager;
+import org.develop.services.files.BackupManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class FunkoRepositoryImpl implements FunkoRepository<Funko,Integer> {
     private static FunkoRepositoryImpl instance;
@@ -217,7 +219,16 @@ public class FunkoRepositoryImpl implements FunkoRepository<Funko,Integer> {
     @Override
     public CompletableFuture<Boolean> backup(String file){
         return CompletableFuture.supplyAsync(() -> {
-            return true;
+            boolean suc = false;
+            try{
+            BackupManager bkcM = new BackupManager();
+            logger.debug("Iniciando Backup de la Base de Datos......");
+            suc = bkcM.writeFileFunko(file,findAll().get()).get();
+            }catch (InterruptedException | ExecutionException e){
+                logger.error("ERROR: " + e.getMessage(), e);
+            }
+            logger.debug("Backup Realizado Correctamente!");
+            return suc;
         });
     }
 }
