@@ -21,7 +21,8 @@ public class Funko {
     @Override
     public String toString() {
         return "Funko{" +
-                "id=" + myId +
+                "id=" + id +
+                ", myid=" + myId +
                 ", uuid=" + uuid +
                 ", name='" + name + '\'' +
                 ", modelo=" + modelo +
