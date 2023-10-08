@@ -13,12 +13,9 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class DatabaseManager {
-
     private static DatabaseManager instance;
     private final Logger logger = LoggerFactory.getLogger(DatabaseManager.class);
-    private HikariDataSource dataSource;
-    private PreparedStatement preparedStatement;
-    private Connection connection;
+    private final HikariDataSource dataSource;
     private String serverUrl;
     private String dataBaseName;
     private boolean chargeInit;
@@ -27,14 +24,13 @@ public class DatabaseManager {
 
 
     private DatabaseManager(){
-        try {
             configFromProperties();
             HikariConfig config = new HikariConfig();
             config.setJdbcUrl(conURL);
-            this.dataSource = new HikariDataSource(config);
-            openConnection();
+            dataSource = new HikariDataSource(config);
+        try (Connection conn = dataSource.getConnection()){
             if (chargeInit){
-                executeScript(initScript,true);
+                executeScript(conn,initScript,true);
             }
             System.out.println("Successfully");
         }catch (SQLException e) {
@@ -52,24 +48,9 @@ public class DatabaseManager {
     }
 
     public synchronized Connection getConnection() throws SQLException {
-        if (connection == null || connection.isClosed()){
-            try{
-                openConnection();
-            }catch (SQLException e){
-                logger.error("Error: " + e.getMessage(),e);
-            }
-        }
-        return connection;
+        return  dataSource.getConnection();
     }
 
-    private synchronized void openConnection() throws SQLException{
-        connection = dataSource.getConnection();
-    }
-
-    public synchronized void closeConnection() throws SQLException{
-        if (preparedStatement != null){ preparedStatement.close();}
-        connection.close();
-    }
 
     private synchronized void configFromProperties(){
         try{
@@ -80,14 +61,15 @@ public class DatabaseManager {
         dataBaseName = properties.getProperty("database.name","Funkos");
         chargeInit =Boolean.parseBoolean(properties.getProperty("database.initDatabase","false"));
         conURL =properties.getProperty("database.connectionUrl", serverUrl + ":"+dataBaseName + ".db");
+            System.out.println(conURL);
         initScript=properties.getProperty("database.initScript","init.sql");
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-    public synchronized void executeScript(String script, boolean logWriter) throws IOException, SQLException {
-        ScriptRunner runner = new ScriptRunner(connection);
+    public synchronized void executeScript(Connection conn, String script, boolean logWriter) throws IOException, SQLException {
+        ScriptRunner runner = new ScriptRunner(conn);
         InputStream inputStream = ClassLoader.getSystemResourceAsStream(script);
         if (inputStream != null) {
             InputStreamReader reader = new InputStreamReader(inputStream);

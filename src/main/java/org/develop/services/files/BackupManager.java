@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.develop.adapters.LocalDateAdapter;
 import org.develop.model.Funko;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,10 +18,11 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class BackupManager {
-
+        private final Logger logger = LoggerFactory.getLogger(BackupManager.class);
         public CompletableFuture<Boolean> writeFileFunko(String nomFile,List<Funko> funks){
             return CompletableFuture.supplyAsync(()->{
                     String path = Paths.get("").toAbsolutePath().toString() + File.separator + "data" + File.separator + nomFile;
+                    logger.debug("Escribiendo JSON de funkos en: " + path);
                     Gson gson = new GsonBuilder()
                             .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
                             .setPrettyPrinting()
@@ -41,6 +44,7 @@ public class BackupManager {
          Thread.sleep(10000);
           return CompletableFuture.supplyAsync(()->{
                         try(BufferedReader reader =new BufferedReader(new FileReader(path))){
+                            logger.debug("Leyendo Funko desde : " + path);
                         String line;
                         reader.readLine();
                         while ((line = reader.readLine()) != null){

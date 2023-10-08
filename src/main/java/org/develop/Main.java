@@ -17,24 +17,13 @@ public class Main {
 
         var list = readCSV.readFileFunko();
 
-        List<Funko> funkBD = new ArrayList<>();
-
-        for (Funko funko : list.get()) {
-            funkBD.add(fk.save(funko).get());
-        }
-
-
-        var fkup = fk.update(funkBD.get(5));
-
-        System.out.println(fkup.get());
+        list.get().forEach(fk::save);
 
         var fkn = fk.findById(5);
+        var kn1 = fk.findAll();
 
         System.out.println(fkn.get());
-
-        var delFk = fk.deleteById(5);
-
-        System.out.println(fkn.get());
+        kn1.get().forEach(System.out::println);
 
     }
 }

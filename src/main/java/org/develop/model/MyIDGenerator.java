@@ -20,10 +20,9 @@ public class MyIDGenerator {
     }
 
     public Long getIDandIncrement(){
-        long ide = id;
         locker.lock();
         id++;
         locker.unlock();
-        return ide;
+        return id;
     }
 }

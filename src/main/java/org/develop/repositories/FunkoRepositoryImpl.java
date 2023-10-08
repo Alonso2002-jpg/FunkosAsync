@@ -18,7 +18,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-public class FunkoRepositoryImpl implements FunkoRepository<Funko,Integer> {
+public class FunkoRepositoryImpl implements FunkoRepository {
     private static FunkoRepositoryImpl instance;
     private final Logger logger = LoggerFactory.getLogger(FunkoRepositoryImpl.class);
 
@@ -38,11 +38,11 @@ public class FunkoRepositoryImpl implements FunkoRepository<Funko,Integer> {
 
     @Override
     public CompletableFuture<Funko> save(Funko funko) throws FunkoNotSaveException {
-        logger.debug("Saving Funko On Database: " + funko.getName());
         String sqlQuery = "INSERT INTO Funko (uuid,myid, name, modelo, precio, fecha_lanzamiento) VALUES (?, ?, ?, ?, ?, ?)";
         return CompletableFuture.supplyAsync(() -> {
             try (var conn = db.getConnection();
                  var stmt = conn.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS)) {
+                logger.debug("Saving Funko On Database: " + funko.getName());
                 stmt.setObject(1, funko.getUuid());
                 stmt.setLong(2, funko.getMyId());
                 stmt.setString(3, funko.getName());
@@ -71,11 +71,11 @@ public class FunkoRepositoryImpl implements FunkoRepository<Funko,Integer> {
 
     @Override
     public CompletableFuture<Funko> update(Funko funko) throws FunkoNotFoundException {
-        logger.info("Actualizando Objeto ..... ");
         String sqlQuery = "UPDATE Funko SET name = ? , modelo = ?, precio = ? , updated_at = ? WHERE id = ?";
         return CompletableFuture.supplyAsync(() -> {
             try (var conn = db.getConnection();
                  var stmt = conn.prepareStatement(sqlQuery)) {
+                logger.debug("Actualizando Objeto ..... ");
                 stmt.setString(1, funko.getName());
                 stmt.setString(2, funko.getModelo().toString());
                 stmt.setDouble(3, funko.getPrecio());
@@ -98,11 +98,12 @@ public class FunkoRepositoryImpl implements FunkoRepository<Funko,Integer> {
 
     @Override
     public CompletableFuture<Optional<Funko>> findById(Integer id) throws FunkoNotFoundException {
-        logger.info("Buscando Objeto con ID " + id + "......");
+
         String sqlQuery = "SELECT * FROM Funko WHERE id = ?";
         return CompletableFuture.supplyAsync(() -> {
             Optional<Funko> funk = Optional.empty();
             try (var conn = db.getConnection(); var stmt = conn.prepareStatement(sqlQuery)) {
+            logger.info("Buscando Objeto con ID " + id + "......");
                 stmt.setInt(1, id);
                 var rs = stmt.executeQuery();
                 while (rs.next()) {
@@ -125,13 +126,14 @@ public class FunkoRepositoryImpl implements FunkoRepository<Funko,Integer> {
     }
 
     @Override
-    public CompletableFuture<List<Funko>> findByNombre(String nombre) {
-        logger.info("Obtener Funko con Nombre "+nombre+".......");
+    public CompletableFuture<List<Funko>> findByNombre(String nombre){
+
         List<Funko> funks = new ArrayList<>();
         return CompletableFuture.supplyAsync(()->{
         String sqlQuery = "SELECT * FROM Funko WHERE name LIKE ?";
         try (var conn = db.getConnection(); var stmt = conn.prepareStatement(sqlQuery)){
             stmt.setString(1,"%" + nombre + "%");
+            logger.info("Obtener Funko con Nombre "+nombre+".......");
             var rs = stmt.executeQuery();
             while (rs.next()){
                 Funko fk = new Funko();
@@ -154,12 +156,11 @@ public class FunkoRepositoryImpl implements FunkoRepository<Funko,Integer> {
 
     @Override
     public CompletableFuture<List<Funko>> findAll() {
-        logger.info("Obteniendo todos los Objetos");
         String sqlQuery = "SELECT * FROM Funko";
-
         return CompletableFuture.supplyAsync(() -> {
             List<Funko> funks = new ArrayList<>();
             try (var conn = db.getConnection(); var stmt = conn.prepareStatement(sqlQuery)) {
+                logger.info("Obteniendo todos los Objetos");
                 var rs = stmt.executeQuery();
                 while (rs.next()) {
                     Funko fk = new Funko();
@@ -182,10 +183,10 @@ public class FunkoRepositoryImpl implements FunkoRepository<Funko,Integer> {
 
     @Override
     public CompletableFuture<Boolean> deleteById(Integer id) throws FunkoNotFoundException {
-        logger.info("Eliminando Objeto con ID " + id + "..........");
         String sqlQuery = "DELETE FROM Funko WHERE id = ? ";
         return CompletableFuture.supplyAsync(() -> {
             try (var conn = db.getConnection(); var stmt = conn.prepareStatement(sqlQuery)) {
+                   logger.info("Eliminando Objeto con ID " + id + "..........");
                 stmt.setInt(1, id);
                 var rs = stmt.executeUpdate();
                 if (rs > 0) {
@@ -202,16 +203,15 @@ public class FunkoRepositoryImpl implements FunkoRepository<Funko,Integer> {
 
     @Override
     public CompletableFuture<Void> deleteAll() {
-        return CompletableFuture.supplyAsync(() -> {
-            logger.info("Eliminando Objetos de la BD......");
+        return CompletableFuture.runAsync(() -> {
             String sqlQuery = "DELETE FROM Funko";
             try (var conn = db.getConnection(); var stmt = conn.prepareStatement(sqlQuery)) {
+                logger.info("Eliminando Objetos de la BD......");
                 stmt.executeUpdate();
             } catch (SQLException e) {
                 logger.error("ERROR: " + e.getMessage(), e);
             }
             logger.info("Objetos eliminados Correctamente");
-            return null;
         });
     }
 

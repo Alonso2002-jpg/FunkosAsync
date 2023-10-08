@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.develop.locale.MyLocale;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
@@ -18,6 +19,8 @@ public class Funko {
     private Modelo modelo;
     private double precio;
     private LocalDate fecha_lanzamiento;
+    private LocalDateTime created_at = LocalDateTime.now();
+    private LocalDateTime updated_at = LocalDateTime.now();
     @Override
     public String toString() {
         return "Funko{" +
