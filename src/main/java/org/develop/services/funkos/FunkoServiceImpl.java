@@ -88,7 +88,7 @@ public class FunkoServiceImpl implements FunkoService{
     }
 
     @Override
-    public CompletableFuture<Funko> update(Funko funko) throws SQLException, FunkoNotFoundException, ExecutionException, InterruptedException {
+    public CompletableFuture<Funko> update(Funko funko) throws FunkoNotFoundException{
        return CompletableFuture.supplyAsync(()->{
             Funko funks;
             try {
@@ -101,17 +101,39 @@ public class FunkoServiceImpl implements FunkoService{
     }
 
     @Override
-    public CompletableFuture<Boolean> deleteById(int id) throws SQLException, FunkoNotFoundException, ExecutionException, InterruptedException {
-        return null;
+    public CompletableFuture<Boolean> deleteById(int id) throws FunkoNotFoundException {
+        return CompletableFuture.supplyAsync(()->{
+            boolean result;
+            try {
+                result = funkoRepository.deleteById(id).get();
+            } catch (SQLException | ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return result;
+        });
     }
 
     @Override
-    public CompletableFuture<Void> deleteAll() throws SQLException, ExecutionException, InterruptedException {
-        return null;
+    public CompletableFuture<Void> deleteAll(){
+       return CompletableFuture.runAsync(()->{
+            try {
+                funkoRepository.deleteAll().get();
+            } catch (SQLException | ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override
-    public CompletableFuture<Boolean> backup(String file) throws SQLException, ExecutionException, InterruptedException {
-        return null;
+    public CompletableFuture<Boolean> backup(String file) {
+        return CompletableFuture.supplyAsync(()->{
+            boolean result;
+            try {
+                result = funkoRepository.backup(file).get();
+            } catch (SQLException | ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return result;
+        });
     }
 }
