@@ -28,5 +28,4 @@ public interface CRUDRepository <T,ID>{
     CompletableFuture<Void> deleteAll() throws SQLException;
 
     // Hacer Backup
-    CompletableFuture<Boolean> backup(String file) throws SQLException;
 }

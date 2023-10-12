@@ -3,6 +3,7 @@ package org.develop.services.files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.develop.adapters.LocalDateAdapter;
+import org.develop.adapters.LocalDateTimeAdapter;
 import org.develop.model.Funko;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -25,6 +27,7 @@ public class BackupManager {
                     logger.debug("Escribiendo JSON de funkos en: " + path);
                     Gson gson = new GsonBuilder()
                             .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                             .setPrettyPrinting()
                             .create();
                     boolean success = false;
@@ -32,7 +35,7 @@ public class BackupManager {
                         gson.toJson(funks, writer);
                         success = true;
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        logger.error("Error: "+e.getMessage(), e);
                 }
                 return success;
             });

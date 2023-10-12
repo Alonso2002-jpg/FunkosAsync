@@ -5,16 +5,15 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class LocalDateAdapter extends TypeAdapter<LocalDate> {
-        private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+public class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 
     @Override
-    public void write(JsonWriter out, LocalDate value) throws IOException {
+    public void write(JsonWriter out, LocalDateTime value) throws IOException {
         if (value == null) {
             out.nullValue();
         } else {
@@ -23,8 +22,7 @@ public class LocalDateAdapter extends TypeAdapter<LocalDate> {
     }
 
     @Override
-    public LocalDate read(JsonReader in) throws IOException {
+    public LocalDateTime read(JsonReader in) throws IOException {
         return null;
     }
-
 }

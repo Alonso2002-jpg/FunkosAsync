@@ -37,7 +37,6 @@ public class Funko {
     public Funko setFunko(String line){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String[] lineas = line.split(",");
-        setMyId(MyIDGenerator.getInstance().getIDandIncrement());
         setUuid(UUID.fromString(lineas[0].length()>36?lineas[0].substring(0,35):lineas[0]));
         setName(lineas[1]);
         setModelo(Modelo.valueOf(lineas[2]));

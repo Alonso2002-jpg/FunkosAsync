@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -38,10 +39,13 @@ public class FunkoCacheImpl implements FunkoCache{
     }
 
     @Override
-    public CompletableFuture<Funko> get(Integer key) {
+    public CompletableFuture<Optional<Funko>> get(Integer key) {
         return CompletableFuture.supplyAsync(()->{
            logger.debug("Obteniendo Funko de la Cache");
-            return cache.get(key);
+           if (cache.get(key) != null){
+            return Optional.of(cache.get(key));
+           }
+           return Optional.empty();
        });
     }
 

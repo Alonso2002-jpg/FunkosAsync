@@ -4,8 +4,8 @@ import org.develop.exceptions.FunkoNotFoundException;
 import org.develop.exceptions.FunkoNotSaveException;
 import org.develop.model.Funko;
 import org.develop.model.Modelo;
+import org.develop.model.MyIDGenerator;
 import org.develop.services.database.DatabaseManager;
-import org.develop.services.files.BackupManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,21 +16,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 public class FunkoRepositoryImpl implements FunkoRepository {
     private static FunkoRepositoryImpl instance;
     private final Logger logger = LoggerFactory.getLogger(FunkoRepositoryImpl.class);
 
     private final DatabaseManager db;
+    private final MyIDGenerator idGenerator;
 
-    private FunkoRepositoryImpl(DatabaseManager db) {
+    private FunkoRepositoryImpl(DatabaseManager db,MyIDGenerator idGenerator) {
         this.db = db;
+        this.idGenerator = idGenerator;
     }
 
-    public synchronized static FunkoRepositoryImpl getInstance(DatabaseManager db) {
+    public synchronized static FunkoRepositoryImpl getInstance(DatabaseManager db,MyIDGenerator idGenerator) {
         if (instance == null) {
-            instance = new FunkoRepositoryImpl(db);
+            instance = new FunkoRepositoryImpl(db,idGenerator);
         }
 
         return instance;
@@ -43,6 +44,7 @@ public class FunkoRepositoryImpl implements FunkoRepository {
             try (var conn = db.getConnection();
                  var stmt = conn.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS)) {
                 logger.debug("Saving Funko On Database: " + funko.getName());
+                funko.setMyId(idGenerator.getIDandIncrement());
                 stmt.setObject(1, funko.getUuid());
                 stmt.setLong(2, funko.getMyId());
                 stmt.setString(3, funko.getName());
@@ -215,22 +217,6 @@ public class FunkoRepositoryImpl implements FunkoRepository {
         });
     }
 
-
-    @Override
-    public CompletableFuture<Boolean> backup(String file){
-        return CompletableFuture.supplyAsync(() -> {
-            boolean suc = false;
-            try{
-            BackupManager bkcM = new BackupManager();
-            logger.debug("Iniciando Backup de la Base de Datos......");
-            suc = bkcM.writeFileFunko(file,findAll().get()).get();
-            }catch (InterruptedException | ExecutionException e){
-                logger.error("ERROR: " + e.getMessage(), e);
-            }
-            logger.debug("Backup Realizado Correctamente!");
-            return suc;
-        });
-    }
 }
 
 
