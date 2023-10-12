@@ -26,4 +26,6 @@ public interface FunkoService {
     CompletableFuture<Void> deleteAll() throws SQLException, ExecutionException, InterruptedException;
 
     CompletableFuture<Boolean> backup(String file) throws SQLException, ExecutionException, InterruptedException;
+
+    CompletableFuture<List<Funko>> imported(String file) throws InterruptedException;
 }

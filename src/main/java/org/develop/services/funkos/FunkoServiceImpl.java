@@ -4,7 +4,7 @@ import org.develop.exceptions.FunkoNotFoundException;
 import org.develop.exceptions.FunkoNotSaveException;
 import org.develop.model.Funko;
 import org.develop.repositories.FunkoRepository;
-import org.develop.services.files.BackupManager;
+import org.develop.services.files.BackupManagerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,14 +21,14 @@ public class FunkoServiceImpl implements FunkoService{
     private static FunkoServiceImpl instance;
     private final FunkoCache cache;
     private final FunkoRepository funkoRepository;
-    private final BackupManager backupManager;
+    private final BackupManagerImpl backupManager;
 
-    private FunkoServiceImpl(BackupManager backupManager,FunkoRepository funkoRepository){
+    private FunkoServiceImpl(BackupManagerImpl backupManager, FunkoRepository funkoRepository){
         this.funkoRepository =funkoRepository;
         this.backupManager = backupManager;
         this.cache = new FunkoCacheImpl(CACHE_SIZE);
     }
-    public synchronized static FunkoServiceImpl getInstance(BackupManager backupManager,FunkoRepository funkoRepository){
+    public synchronized static FunkoServiceImpl getInstance(BackupManagerImpl backupManager, FunkoRepository funkoRepository){
         if (instance == null){
             instance = new FunkoServiceImpl(backupManager,funkoRepository);
         }
@@ -50,7 +50,7 @@ public class FunkoServiceImpl implements FunkoService{
     public CompletableFuture<Optional<Funko>> findById(int id) throws FunkoNotFoundException, ExecutionException, InterruptedException, SQLException {
         logger.debug("Obteniendo el funko con Id: " + id);
         var fk = cache.get(id);
-        if (fk != null && fk.get().isPresent()) {
+        if (fk != null && fk.get().isPresent()  ) {
             return fk;
         } else {
             return funkoRepository.findById(id);
@@ -103,5 +103,10 @@ public class FunkoServiceImpl implements FunkoService{
         var suc = backupManager.writeFileFunko(file,findAll().get());
         logger.debug("Backup Realizado Correctamente!");
         return suc;
+    }
+
+    @Override
+    public CompletableFuture<List<Funko>> imported(String file) throws InterruptedException {
+        return backupManager.readFileFunko(file);
     }
 }
