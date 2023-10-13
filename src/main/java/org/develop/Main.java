@@ -37,8 +37,8 @@ public class Main {
 //        //Obteniendo todos los Funkos de la BD
 //        fknServ.findAll().get().forEach(System.out::println);
 //
-//        //Obteniendo Funko con ID: 10
-//        var funkoId = fknServ.findById(10);
+        //Obteniendo Funko con ID: 10
+        var funkoId = fknServ.findById(10);
 //        System.out.println(funkoId.get());
 //        //Obteninedo Funko con ID erroneo
 //        var funkoBadId = fknServ.findById(200);
@@ -47,7 +47,7 @@ public class Main {
 //        //Actualizando Funko
 //        Funko fkn = funkoId.get().get();
 //        fkn.setName("Funko Actualizado");
-//        var updateFun = fknServ.update(fkn);
+//        var updateFun = fknServ.update(funk);
 //        System.out.println(updateFun.get());
 //
 //        //Obteniendo Funkos con nombre : "Super"
@@ -73,62 +73,62 @@ public class Main {
 //        //Exportando Mal Datos a Fichero JSON
 //        var badexp = fknServ.backup("funkos");
 //        System.out.println(badexp.get());
-
-        var allFunks = fknServ.findAll();
-
-        var moreExpFun = allFunks.get().stream()
-                        .max(Comparator.comparingDouble(Funko::getPrecio));
-        main.logger.debug("Funko mas Caro");
-        System.out.println(moreExpFun.orElse(new Funko()));
-
-        main.logger.debug("Media de precio de Funkos");
-        var funkPricAverage = allFunks.get().stream()
-                .mapToDouble(Funko::getPrecio)
-                .average();
-        System.out.println("Media de precios : " + funkPricAverage.orElse(0.0));
-
-        main.logger.debug("Funkos Agrupados por Modelo");
-        var funkType= allFunks.get().stream()
-                .map(Funko::getModelo)
-                .distinct()
-                .collect(Collectors.toMap(fk->fk,
-                        fk-> {
-                            try {
-                                return allFunks.get().stream()
-                                .filter(fkT -> fkT.getModelo().equals(fk))
-                                .toList();
-                            } catch (InterruptedException | ExecutionException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }));
-        funkType.forEach((a,b) -> System.out.println(a + " : " + b));
-
-        main.logger.debug("Numero de Funkos por Modelo");
-        var funkCountType = allFunks.get().stream()
-                .map(Funko::getModelo)
-                .collect(Collectors.groupingBy(fk->fk,Collectors.counting()));
-        funkCountType.forEach((a,b) -> System.out.println(a + " : " + b));
-
-        main.logger.debug("Funkos Lanzados en el 2023");
-        var funkLaunchDate = allFunks.get().stream()
-                .filter(fk -> fk.getFecha_lanzamiento().toString().contains("2023"))
-                .toList();
-        funkLaunchDate.forEach(System.out::println);
-
-        main.logger.debug("Funkos de Stitch");
-        var count = allFunks.get().stream()
-        .filter(fk -> fk.getName().contains("Stitch"))
-        .count();
-
-        var stitchFunkos = allFunks.get().stream()
-                .filter(fk -> fk.getName().contains("Stitch"))
-                .collect(Collectors.groupingBy(
-                        fk -> count,  // Utiliza la cantidad como clave
-                        Collectors.toList()
-                ));
-
-        System.out.println("Funkos de Stitch : ");
-        stitchFunkos.forEach((a,b) -> System.out.println(a + " : " + b));
+//
+//        var allFunks = fknServ.findAll();
+//
+//        var moreExpFun = allFunks.get().stream()
+//                        .max(Comparator.comparingDouble(Funko::getPrecio));
+//        main.logger.debug("Funko mas Caro");
+//        System.out.println(moreExpFun.orElse(new Funko()));
+//
+//        main.logger.debug("Media de precio de Funkos");
+//        var funkPricAverage = allFunks.get().stream()
+//                .mapToDouble(Funko::getPrecio)
+//                .average();
+//        System.out.println("Media de precios : " + funkPricAverage.orElse(0.0));
+//
+//        main.logger.debug("Funkos Agrupados por Modelo");
+//        var funkType= allFunks.get().stream()
+//                .map(Funko::getModelo)
+//                .distinct()
+//                .collect(Collectors.toMap(fk->fk,
+//                        fk-> {
+//                            try {
+//                                return allFunks.get().stream()
+//                                .filter(fkT -> fkT.getModelo().equals(fk))
+//                                .toList();
+//                            } catch (InterruptedException | ExecutionException e) {
+//                                throw new RuntimeException(e);
+//                            }
+//                        }));
+//        funkType.forEach((a,b) -> System.out.println(a + " : " + b));
+//
+//        main.logger.debug("Numero de Funkos por Modelo");
+//        var funkCountType = allFunks.get().stream()
+//                .map(Funko::getModelo)
+//                .collect(Collectors.groupingBy(fk->fk,Collectors.counting()));
+//        funkCountType.forEach((a,b) -> System.out.println(a + " : " + b));
+//
+//        main.logger.debug("Funkos Lanzados en el 2023");
+//        var funkLaunchDate = allFunks.get().stream()
+//                .filter(fk -> fk.getFecha_lanzamiento().toString().contains("2023"))
+//                .toList();
+//        funkLaunchDate.forEach(System.out::println);
+//
+//        main.logger.debug("Funkos de Stitch");
+//        var count = allFunks.get().stream()
+//        .filter(fk -> fk.getName().contains("Stitch"))
+//        .count();
+//
+//        var stitchFunkos = allFunks.get().stream()
+//                .filter(fk -> fk.getName().contains("Stitch"))
+//                .collect(Collectors.groupingBy(
+//                        fk -> count,  // Utiliza la cantidad como clave
+//                        Collectors.toList()
+//                ));
+//
+//        System.out.println("Funkos de Stitch : ");
+//        stitchFunkos.forEach((a,b) -> System.out.println(a + " : " + b));
     }
 
 }
