@@ -4,6 +4,7 @@ import org.develop.exceptions.FunkoNotFoundException;
 import org.develop.exceptions.FunkoNotSaveException;
 import org.develop.model.Funko;
 import org.develop.repositories.FunkoRepository;
+import org.develop.services.files.BackupManager;
 import org.develop.services.files.BackupManagerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +65,7 @@ public class FunkoServiceImpl implements FunkoService{
     public CompletableFuture<Funko> save(Funko funko) throws FunkoNotSaveException, SQLException, ExecutionException, InterruptedException {
         logger.debug("Guardando Funko en la base de datos: " + funko);
         var funk = funkoRepository.save(funko);
-        cache.put(funk.get().getId(), funk.get());
+           cache.put(funk.get().getId(), funk.get());
         return funk;
     }
 

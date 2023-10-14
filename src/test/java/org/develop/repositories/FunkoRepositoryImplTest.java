@@ -24,7 +24,6 @@ class FunkoRepositoryImplTest {
     @BeforeEach
     void setup() throws SQLException {
         funkoRepository = FunkoRepositoryImpl.getInstance(DatabaseManager.getInstance(), MyIDGenerator.getInstance());
-        funkoRepository.deleteAll();
 
         funko1=new Funko();
         funko1.setUuid(UUID.randomUUID());
