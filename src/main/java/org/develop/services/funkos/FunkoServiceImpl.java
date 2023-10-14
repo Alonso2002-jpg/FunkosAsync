@@ -4,6 +4,7 @@ import org.develop.exceptions.FunkoNotFoundException;
 import org.develop.exceptions.FunkoNotSaveException;
 import org.develop.model.Funko;
 import org.develop.repositories.FunkoRepository;
+import org.develop.services.files.BackupManager;
 import org.develop.services.files.BackupManagerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class FunkoServiceImpl implements FunkoService{
     private static final int CACHE_SIZE =10;
@@ -62,7 +65,7 @@ public class FunkoServiceImpl implements FunkoService{
     public CompletableFuture<Funko> save(Funko funko) throws FunkoNotSaveException, SQLException, ExecutionException, InterruptedException {
         logger.debug("Guardando Funko en la base de datos: " + funko);
         var funk = funkoRepository.save(funko);
-        cache.put(funko.getId(),funko);
+           cache.put(funk.get().getId(), funk.get());
         return funk;
     }
 
@@ -89,9 +92,9 @@ public class FunkoServiceImpl implements FunkoService{
        return CompletableFuture.runAsync(()->{
             try {
                 logger.debug("Eliminando todos los elementos de la Base de Datos....");
-                funkoRepository.deleteAll().get();
+                funkoRepository.deleteAll().join();
                 cache.clear();
-            } catch (SQLException | ExecutionException | InterruptedException e) {
+            } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         });
