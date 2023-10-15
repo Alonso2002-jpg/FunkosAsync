@@ -40,6 +40,11 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Obtiene una instancia unica de DatabaseManager.
+     *
+     * @return Una instancia de DatabaseManager.
+     */
     public static synchronized DatabaseManager getInstance(){
         if (instance==null){
             instance=new DatabaseManager();
@@ -47,6 +52,12 @@ public class DatabaseManager {
         return instance;
     }
 
+    /**
+     * Obtiene una conexion a la base de datos.
+     *
+     * @return Una conexion a la base de datos.
+     * @throws SQLException Si se produce un error al establecer la conexion.
+     */
     public synchronized Connection getConnection() throws SQLException {
         return  dataSource.getConnection();
     }
@@ -68,6 +79,16 @@ public class DatabaseManager {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Ejecuta un script SQL en la base de datos.
+     *
+     * @param conn       La conexion a la base de datos en la que se ejecutara el script.
+     * @param script     El nombre del archivo que contiene el script SQL.
+     * @param logWriter  Indica si se debe registrar la salida en la consola.
+     * @throws IOException Si se produce un error de lectura del script SQL.
+     * @throws SQLException Si se produce un error al ejecutar el script SQL.
+     */
     public synchronized void executeScript(Connection conn, String script, boolean logWriter) throws IOException, SQLException {
         ScriptRunner runner = new ScriptRunner(conn);
         InputStream inputStream = ClassLoader.getSystemResourceAsStream(script);

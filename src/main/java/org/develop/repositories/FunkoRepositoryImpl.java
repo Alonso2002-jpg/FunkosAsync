@@ -17,6 +17,15 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Clase que implementa la interfaz `FunkoRepository` y proporciona metodos para realizar operaciones CRUD en objetos Funko
+ * utilizando una base de datos y un generador de ID.
+ *
+ * Esta clase se encarga de guardar, actualizar, buscar y eliminar Funkos en la base de datos, ademas de proporcionar
+ * una operacion para buscar Funkos por nombre.
+ *
+ @author Alonso Cruz, Joselyn Obando
+ */
 public class FunkoRepositoryImpl implements FunkoRepository {
     private static FunkoRepositoryImpl instance;
     private final Logger logger = LoggerFactory.getLogger(FunkoRepositoryImpl.class);
@@ -29,6 +38,13 @@ public class FunkoRepositoryImpl implements FunkoRepository {
         this.idGenerator = idGenerator;
     }
 
+    /**
+     * Obtiene la única instancia de la clase FunkoRepositoryImpl, utilizando el patron Singleton.
+     *
+     * @param db          El gestor de la base de datos.
+     * @param idGenerator El generador de IDs.
+     * @return La instancia de FunkoRepositoryImpl.
+     */
     public synchronized static FunkoRepositoryImpl getInstance(DatabaseManager db,MyIDGenerator idGenerator) {
         if (instance == null) {
             instance = new FunkoRepositoryImpl(db,idGenerator);
@@ -37,6 +53,13 @@ public class FunkoRepositoryImpl implements FunkoRepository {
         return instance;
     }
 
+    /**
+     * Guarda un objeto Funko en la base de datos.
+     *
+     * @param funko El objeto Funko que se va a guardar en la base de datos.
+     * @return Un CompletableFuture que contendra el objeto Funko guardado si la operacion es exitosa.
+     * @throws FunkoNotSaveException Si ocurre un error durante el proceso de guardado y el Funko no se almacena en la BD.
+     */
     @Override
     public CompletableFuture<Funko> save(Funko funko) throws FunkoNotSaveException {
         String sqlQuery = "INSERT INTO Funko (uuid,myid, name, modelo, precio, fecha_lanzamiento) VALUES (?, ?, ?, ?, ?, ?)";
@@ -71,6 +94,13 @@ public class FunkoRepositoryImpl implements FunkoRepository {
         });
     }
 
+    /**
+     * Actualiza un objeto Funko en la base de datos.
+     *
+     * @param funko El objeto Funko que se va a actualizar en la base de datos.
+     * @return Un CompletableFuture que contendra el objeto Funko actualizado si la operacion es exitosa.
+     * @throws FunkoNotFoundException Si el Funko con el ID especificado no se encuentra en la BD.
+     */
     @Override
     public CompletableFuture<Funko> update(Funko funko) throws FunkoNotFoundException {
         String sqlQuery = "UPDATE Funko SET name = ? , modelo = ?, precio = ? , updated_at = ? WHERE id = ?";
@@ -98,6 +128,13 @@ public class FunkoRepositoryImpl implements FunkoRepository {
         });
     }
 
+    /**
+     * Busca un objeto Funko en la base de datos por su ID.
+     *
+     * @param id El ID del Funko que se desea buscar.
+     * @return Un CompletableFuture que contendra un Optional que puede contener el Funko encontrado si existe.
+     * @throws FunkoNotFoundException Si el Funko con el ID especificado no se encuentra en la BD.
+     */
     @Override
     public CompletableFuture<Optional<Funko>> findById(Integer id) throws FunkoNotFoundException {
 
@@ -127,6 +164,12 @@ public class FunkoRepositoryImpl implements FunkoRepository {
         });
     }
 
+    /**
+     * Busca y recupera una lista de objetos Funko cuyos nombres contienen una cadena especifica.
+     *
+     * @param nombre La cadena que se utilizara para buscar Funkos por nombre.
+     * @return Un CompletableFuture que contendra una lista de Funkos cuyos nombres coinciden con el parametro proporcionado.
+     */
     @Override
     public CompletableFuture<List<Funko>> findByNombre(String nombre){
 
@@ -156,6 +199,11 @@ public class FunkoRepositoryImpl implements FunkoRepository {
         });
     }
 
+    /**
+     * Recupera una lista de todos los objetos Funko almacenados en la base de datos.
+     *
+     * @return Un CompletableFuture que contendra una lista de todos los Funkos almacenados en la base de datos.
+     */
     @Override
     public CompletableFuture<List<Funko>> findAll() {
         String sqlQuery = "SELECT * FROM Funko";
@@ -183,6 +231,13 @@ public class FunkoRepositoryImpl implements FunkoRepository {
         });
     }
 
+    /**
+     * Elimina un objeto Funko de la base de datos por su ID.
+     *
+     * @param id El ID del Funko que se desea eliminar de la base de datos.
+     * @return Un CompletableFuture que contendra un valor booleano que indica si la eliminacion fue exitosa (true) o si el Funko no se encontro en la BD (false).
+     * @throws FunkoNotFoundException Si el Funko con el ID especificado no se encuentra en la BD.
+     */
     @Override
     public CompletableFuture<Boolean> deleteById(Integer id) throws FunkoNotFoundException {
         String sqlQuery = "DELETE FROM Funko WHERE id = ? ";
@@ -203,6 +258,11 @@ public class FunkoRepositoryImpl implements FunkoRepository {
         });
     }
 
+    /**
+     * Elimina todos los objetos Funko de la base de datos.
+     *
+     * @return Un CompletableFuture<Void> que se completa cuando se han eliminado todos los Funkos de la BD.
+     */
     @Override
     public CompletableFuture<Void> deleteAll() {
         return CompletableFuture.runAsync(() -> {
