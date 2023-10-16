@@ -281,7 +281,7 @@ public class FunkoNotFoundException extends FunkoException{
 }
 
 ```
-### Paso 9: Crear la clase FunkoNotSaveException
+### Paso 10: Crear la clase FunkoNotSaveException
 La clase `FunkoNotSaveException` es otra subclase de la clase `FunkoException` y se utiliza para manejar excepciones específicas relacionadas con la incapacidad de guardar un objeto `Funko` en tu aplicación o sistema. Al igual que la clase `FunkoNotFoundException`, esta clase extiende `FunkoException`, que, a su vez, extiende `RuntimeException`.
 ```java
 package org.develop.exceptions;
@@ -294,7 +294,7 @@ public class FunkoNotSaveException extends FunkoException{
 ```
 ## Servicios de Almacenamiento
 ***
-### Paso 10: Crear la clase DatabaseManager
+### Paso 11: Crear la clase DatabaseManager
 La clase `DatabaseManager` es una clase que gestiona una base de datos utilizando la biblioteca `HikariCP` y permite a tu aplicación conectarse a la base de datos, ejecutar scripts de inicialización y obtener conexiones.
 La clase `DatabaseManager` con los atributos Logger `logger`, HikariDataSource `dataSource`, `serverUrl`, `dataBaseName`, `chargeInit`, `conURL`, `initScript`.
 
@@ -384,7 +384,7 @@ public class DatabaseManager {
 ```
 ## Repositories
 ***
-### Paso 11: CRUDRepository
+### Paso 12: CRUDRepository
 
 La interfaz `CRUDRepository` define un conjunto de métodos que proporcionan operaciones básicas de creación, lectura, actualización y eliminación (CRUD) para trabajar con objetos de tipo T en una base de datos o repositorio. Además, incluye un método adicional para realizar una operación de respaldo.
 ```java
@@ -420,7 +420,7 @@ public interface CRUDRepository <T,ID>{
     // Hacer Backup
 }
 ```
-### Paso 11: FunkoRepository
+### Paso 13: FunkoRepository
 La interfaz `FunkoRepository` extiende la interfaz `CRUDRepository` y agrega un método de búsqueda específico para buscar objetos `Funko` por su nombre. Esto permite realizar operaciones de búsqueda personalizadas en la base de datos o en el repositorio en función del nombre del `Funko`. Las implementaciones concretas de esta interfaz proporcionarán la lógica necesaria para realizar estas operaciones de búsqueda.
 
 ```java
@@ -436,7 +436,7 @@ public interface FunkoRepository extends CRUDRepository<Funko,Integer>{
     CompletableFuture<List<Funko>> findByNombre(String nombre);
 }
 ```
-### Paso 11: FunkoRepositoryImpl
+### Paso 14: FunkoRepositoryImpl
 La clase `FunkoRepositoryImpl` proporciona una implementación de las operaciones CRUD (crear, leer, actualizar, eliminar) para objetos Funko en una base de datos. Estas operaciones se realizan de manera asincrónica utilizando CompletableFuture y pueden lanzar excepciones específicas para manejar errores y excepciones. 
 La implementación se basa en SQL para interactuar con la base de datos subyacente.
 ```java
@@ -661,7 +661,7 @@ public class FunkoRepositoryImpl implements FunkoRepository {
 
 }
 ```
-ç6
+### Paso 15: BackupManager
 La interfaz ´BackupManager<T>´ proporciona métodos para realizar operaciones de respaldo de objetos de tipo T (en este caso, objetos Funko). Permite escribir objetos en un archivo de respaldo y leer objetos desde un archivo de respaldo. Estas operaciones pueden realizarse de manera asincrónica utilizando CompletableFuture. La implementación concreta de esta interfaz determinará cómo se realizan estas operaciones de respaldo y lectura para objetos Funko.
 ```java
 package org.develop.services.files;
@@ -676,7 +676,7 @@ public interface BackupManager <T>{
     CompletableFuture<List<Funko>> readFileFunko(String nomFile) throws InterruptedException;
 }
 ```
-### Paso 13: BackupManagerImpl
+### Paso 16: BackupManagerImpl
 La clase `BackupManagerImpl` proporciona métodos para realizar operaciones de respaldo de objetos `Funko` en archivos. Puede escribir objetos `Funko` en un archivo en formato `JSON` y leer objetos Funko desde un archivo en formato JSON. Estas operaciones se realizan de manera asincrónica utilizando CompletableFuture. La implementación utiliza la biblioteca Gson para serializar y deserializar objetos en formato JSON. La implementación sigue un patrón Singleton, lo que significa que solo puede haber una instancia de esta clase en la aplicación.
 ```java
 package org.develop.services.files;
@@ -760,7 +760,7 @@ public class BackupManagerImpl implements BackupManager<Funko>{
 ```
 ## Servicios de Almacenamiento Funkos
 ***
-### Paso 14: FunkoCache
+### Paso 17: FunkoCache
 La interfaz `FunkoCache` extiende una interfaz genérica llamada Cache y se especializa para trabajar con objetos de tipo Funko utilizando identificadores de tipo Integer. Las implementaciones concretas de esta interfaz proporcionarán la funcionalidad para almacenar y gestionar objetos `Funko en una estructura de caché.
 ```java
 package org.develop.services.funkos;
@@ -771,7 +771,7 @@ import org.develop.services.cache.Cache;
 interface FunkoCache extends Cache<Integer, Funko> {
 }
 ```
-### Paso 15: FunkoCacheImpl
+### Paso 18: FunkoCacheImpl
 La clase `FunkoCacheImpl` proporciona una implementación de una caché para objetos `Funko`. La caché se configura para eliminar automáticamente los elementos más antiguos cuando se alcanza el tamaño máximo. Además, se programa una limpieza periódica para eliminar objetos caducados de la caché. La implementación de esta caché utiliza CompletableFuture para realizar operaciones de forma asincrónica.
 ```java
 package org.develop.services.funkos;
@@ -856,7 +856,7 @@ public class FunkoCacheImpl implements FunkoCache{
     }
 }
 ```
-### Paso 16: FunkoService
+### Paso 19: FunkoService
 La interfaz `FunkoService` define métodos que permiten realizar operaciones relacionadas con la gestión de objetos Funko. Los métodos pueden lanzar excepciones relacionadas con SQL y manejo de excepciones asincrónicas. Las implementaciones concretas de esta interfaz proporcionarán la lógica para realizar estas operaciones.
 ```java
 package org.develop.services.funkos;
@@ -891,7 +891,7 @@ CompletableFuture<List<Funko>> findAll() throws SQLException, ExecutionException
     CompletableFuture<List<Funko>> imported(String file) throws InterruptedException;
 }
 ```
-### Paso 17: FunkoServiceImpl
+### Paso 20: FunkoServiceImpl
 La clase `FunkoServiceImpl` proporciona la lógica para interactuar con objetos Funko, realizar operaciones de base de datos, gestionar una caché y realizar operaciones de copia de seguridad e importación de objetos Funko. La implementación de esta clase utiliza CompletableFuture para realizar operaciones de forma asincrónica cuando es necesario.
 ```java
 
