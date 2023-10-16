@@ -14,6 +14,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Implementacion de una cache para objetos Funko con capacidad limitada y limpieza automatica de elementos antiguos.
+ * Utiliza un mapa interno para almacenar los objetos Funko.
+ */
 public class FunkoCacheImpl implements FunkoCache{
     private final Logger logger = LoggerFactory.getLogger(FunkoCacheImpl.class);
     @Getter
@@ -23,6 +27,11 @@ public class FunkoCacheImpl implements FunkoCache{
     @Getter
     private final ScheduledExecutorService cleaner;
 
+    /**
+     * Crea una nueva instancia de FunkoCacheImpl con un tamano maximo especificado.
+     *
+     * @param maxSize El tamano maximo de la cache.
+     */
     public FunkoCacheImpl(int maxSize){
         this.maxSize = maxSize;
         this.cache = new LinkedHashMap<>(maxSize,0.75f,true){
@@ -34,6 +43,14 @@ public class FunkoCacheImpl implements FunkoCache{
         this.cleaner = Executors.newSingleThreadScheduledExecutor();
         this.cleaner.scheduleAtFixedRate(this::clear,2,2, TimeUnit.MINUTES);
     }
+
+    /**
+     * Anade un objeto Funko a la cache.
+     *
+     * @param key   La clave asociada al objeto Funko.
+     * @param value El objeto Funko a ser almacenado en la cache.
+     * @return Un CompletableFuture que se completa cuando la operacion de anadir ha terminado.
+     */
     @Override
     public CompletableFuture<Void> put(Integer key, Funko value) {
        return CompletableFuture.runAsync(()->{
@@ -41,6 +58,14 @@ public class FunkoCacheImpl implements FunkoCache{
            cache.put(key,value);
        });
     }
+
+
+    /**
+     * Obtiene un objeto Funko de la cache utilizando su clave.
+     *
+     * @param key La clave del objeto Funko a obtener.
+     * @return Un CompletableFuture que contendra un Optional con el objeto Funko si se encuentra en la cache, o un Optional vacío si no se encuentra.
+     */
     @Override
     public CompletableFuture<Optional<Funko>> get(Integer key) {
         return CompletableFuture.supplyAsync(()->{
@@ -52,6 +77,12 @@ public class FunkoCacheImpl implements FunkoCache{
        });
     }
 
+    /**
+     * Borra un objeto Funko de la cache utilizando su clave.
+     *
+     * @param key La clave del objeto Funko a borrar.
+     * @return Un CompletableFuture que se completa cuando la operacion de borrado ha terminado.
+     */
     @Override
     public CompletableFuture<Void> remove(Integer key) {
         return CompletableFuture.runAsync(()->{
@@ -60,6 +91,11 @@ public class FunkoCacheImpl implements FunkoCache{
        });
     }
 
+    /**
+     * Limpia la cache de objetos Funko eliminando los elementos caducados automaticamente.
+     *
+     * @return Un CompletableFuture que se completa cuando la operacion de limpieza ha terminado.
+     */
     @Override
     public CompletableFuture<Void> clear() {
         return CompletableFuture.runAsync(()->{
@@ -74,6 +110,11 @@ public class FunkoCacheImpl implements FunkoCache{
        });
     }
 
+    /**
+     * Detiene la tarea programada de limpieza de la cache.
+     *
+     * @return Un CompletableFuture que se completa cuando se ha detenido la tarea de limpieza.
+     */
     @Override
     public CompletableFuture<Void> shutdown() {
         return CompletableFuture.runAsync(cleaner::shutdown);

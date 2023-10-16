@@ -8,6 +8,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Interfaz que define operaciones basicas de un repositorio CRUD (Crear, Leer, Actualizar, Borrar) para entidades.
+ * Esta interfaz proporciona metodos para guardar, actualizar, buscar, listar y borrar entidades, asi como realizar
+ * operaciones de respaldo.
+ *
+ * @param <T> El tipo de entidad que se gestionará en el repositorio.
+ * @param <ID> El tipo de identificador utilizado para las entidades.
+ *
+ * @author Alonso Cruz, Joselyn Obando
+ */
 public interface CRUDRepository <T,ID>{
         // Guardar
     CompletableFuture<T> save(T t) throws SQLException, FunkoNotSaveException;

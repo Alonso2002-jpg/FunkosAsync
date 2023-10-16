@@ -9,6 +9,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
+/**
+ * Clase que representa un objeto Funko con atributos como identificador, nombre, modelo, precio, fecha de lanzamiento, etc.
+ * Esta clase proporciona metodos para formatear y mostrar informacion sobre un Funko.
+ *
+ * @author Alonso Cruz, Joselyn Obando
+ */
 @Data
 @NoArgsConstructor
 public class Funko {
@@ -21,6 +27,13 @@ public class Funko {
     private LocalDate fecha_lanzamiento;
     private LocalDateTime created_at = LocalDateTime.now();
     private LocalDateTime updated_at = LocalDateTime.now();
+
+    /**
+     * Genera una representacion en formato de cadena del objeto Funko.
+     *
+     * @return Una cadena que representa el objeto Funko, incluyendo su identificador, nombre, modelo, precio,
+     *         fecha de lanzamiento, etc., formateados según la configuracion regional especifica.
+     */
     @Override
     public String toString() {
         return "Funko{" +
@@ -34,6 +47,13 @@ public class Funko {
                 '}';
     }
 
+
+    /**
+     * Establece los atributos de un objeto Funko a partir de una linea de datos en formato CSV.
+     *
+     * @param line La linea de datos en formato CSV que contiene informacion sobre el Funko.
+     * @return El objeto Funko con sus atributos configurados segun la linea de datos.
+     */
     public Funko setFunko(String line){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String[] lineas = line.split(",");
