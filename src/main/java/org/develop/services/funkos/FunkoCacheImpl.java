@@ -41,7 +41,6 @@ public class FunkoCacheImpl implements FunkoCache{
            cache.put(key,value);
        });
     }
-
     @Override
     public CompletableFuture<Optional<Funko>> get(Integer key) {
         return CompletableFuture.supplyAsync(()->{

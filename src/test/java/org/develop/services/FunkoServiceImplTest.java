@@ -156,13 +156,13 @@ class FunkoServiceImplTest {
     }
     @Test
     void deleteById() throws SQLException, ExecutionException, InterruptedException {
-        when(repository.deleteById(1)).thenReturn(CompletableFuture.completedFuture(true));
+            when(repository.deleteById(1)).thenReturn(CompletableFuture.completedFuture(true));
 
-        var res = service.deleteById(1).get();
+            var res = service.deleteById(1).get();
 
-        assertTrue(res);
+            assertTrue(res);
 
-        verify(repository,times(1)).deleteById(1);
+            verify(repository,times(1)).deleteById(1);
     }
 
     @Test
