@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 /**
  * Clase que implementa la interfaz `FunkoRepository` y proporciona metodos para realizar operaciones CRUD en objetos Funko
@@ -102,7 +103,7 @@ public class FunkoRepositoryImpl implements FunkoRepository {
      * @throws FunkoNotFoundException Si el Funko con el ID especificado no se encuentra en la BD.
      */
     @Override
-    public CompletableFuture<Funko> update(Funko funko) throws FunkoNotFoundException {
+    public CompletableFuture<Funko> update(Funko funko){
         String sqlQuery = "UPDATE Funko SET name = ? , modelo = ?, precio = ? , updated_at = ? WHERE id = ?";
         return CompletableFuture.supplyAsync(() -> {
             try (var conn = db.getConnection();
@@ -120,8 +121,8 @@ public class FunkoRepositoryImpl implements FunkoRepository {
                 }
 
                 logger.debug("Objeto Actualizado Correctamente!");
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+            } catch (SQLException| FunkoNotFoundException e) {
+                throw new CompletionException(e);
             }
 
             return funko;
@@ -239,7 +240,7 @@ public class FunkoRepositoryImpl implements FunkoRepository {
      * @throws FunkoNotFoundException Si el Funko con el ID especificado no se encuentra en la BD.
      */
     @Override
-    public CompletableFuture<Boolean> deleteById(Integer id) throws FunkoNotFoundException {
+    public CompletableFuture<Boolean> deleteById(Integer id) {
         String sqlQuery = "DELETE FROM Funko WHERE id = ? ";
         return CompletableFuture.supplyAsync(() -> {
             try (var conn = db.getConnection(); var stmt = conn.prepareStatement(sqlQuery)) {
@@ -252,8 +253,8 @@ public class FunkoRepositoryImpl implements FunkoRepository {
                 } else {
                     throw new FunkoNotFoundException("Funko con ID " + id + " no encontrado en la BD");
                 }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+            } catch (SQLException|FunkoNotFoundException e) {
+                throw new CompletionException(e);
             }
         });
     }

@@ -1,5 +1,6 @@
 package org.develop.services.funkos;
 
+import lombok.Getter;
 import org.develop.model.Funko;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +20,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class FunkoCacheImpl implements FunkoCache{
     private final Logger logger = LoggerFactory.getLogger(FunkoCacheImpl.class);
+    @Getter
     private final int maxSize;
+    @Getter
     private final Map<Integer,Funko> cache;
+    @Getter
     private final ScheduledExecutorService cleaner;
 
     /**
@@ -99,7 +103,7 @@ public class FunkoCacheImpl implements FunkoCache{
            cache.entrySet().removeIf(entry -> {
             boolean shouldRemove = entry.getValue().getUpdated_at().plusMinutes(1).isBefore(LocalDateTime.now());
             if (shouldRemove) {
-                logger.debug("Autoeliminando por caducidad alumno de cache con id: " + entry.getKey());
+                logger.debug("Autoeliminando por caducidad Funko de cache con id: " + entry.getKey());
             }
             return shouldRemove;
         });
@@ -113,9 +117,7 @@ public class FunkoCacheImpl implements FunkoCache{
      */
     @Override
     public CompletableFuture<Void> shutdown() {
-        return CompletableFuture.supplyAsync(()->{
-           cleaner.shutdown();
-            return null;
-        });
+        return CompletableFuture.runAsync(cleaner::shutdown);
     }
+
 }
